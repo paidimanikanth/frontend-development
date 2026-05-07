@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple VDOM Test</title>
+</head>
+<body>
+    <div id="app"></div>
+    <button onclick="update()">Update</button>
+    <script>
+        // Simple test
+        class VNode {
+            constructor(type, props, children) {
+                this.type = type;
+                this.props = props || {};
+                this.children = children || [];
+            }
+        }
+
+        function h(type, props, ...children) {
+            return new VNode(type, props, children.flat());
+        }
+
+        class Renderer {
+            constructor(root) {
+                this.root = root;
+                this.vdom = null;
+            }
+
+            render(newVdom) {
+                if (this.vdom === null) {
+                    this.root.innerHTML = '';
+                    this.root.appendChild(this.createElement(newVdom));
+                } else {
+                    this.reconcile(this.root.firstChild, this.vdom, newVdom);
+                }
+                this.vdom = newVdom;
+            }
+
+            createElement(vnode) {
+                if (typeof vnode === 'string') {
+                    return document.createTextNode(vnode);
+                }
+                const el = document.createElement(vnode.type);
+                for (let [k, v] of Object.entries(vnode.props)) {
+                    if (k === 'className') el.className = v;
+                    else el.setAttribute(k, v);
+                }
+                vnode.children.forEach(child => {
+                    el.appendChild(this.createElement(child));
+                });
+                return el;
+            }
+
+            reconcile(domNode, oldVnode, newVnode) {
+                if (typeof oldVnode === 'string' && typeof newVnode === 'string') {
+                    if (oldVnode !== newVnode) {
+                        domNode.textContent = newVnode;
+                        console.log('Updated text');
+                    }
+                    return;
+                }
+
+                if (!oldVnode.type || !newVnode.type || oldVnode.type !== newVnode.type) {
+                    domNode.replaceWith(this.createElement(newVnode));
+                    console.log('Replaced element');
+                    return;
+                }
+
+                // Update children
+                const oldChildren = oldVnode.children || [];
+                const newChildren = newVnode.children || [];
+
+                // Remove extra
+                while (domNode.childNodes.length > newChildren.length) {
+                    domNode.removeChild(domNode.lastChild);
+                }
+
+                // Update/add
+                for (let i = 0; i < newChildren.length; i++) {
+                    if (i < domNode.childNodes.length) {
+                        this.reconcile(domNode.childNodes[i], oldChildren[i], newChildren[i]);
+                    } else {
+                        domNode.appendChild(this.createElement(newChildren[i]));
+                    }
+                }
+            }
+        }
+
+        const renderer = new Renderer(document.getElementById('app'));
+        let count = 0;
+
+        function update() {
+            count++;
+            const vdom = h('div', { className: 'test' },
+                h('h1', {}, 'Count: ' + count),
+                h('p', {}, 'Update #' + count)
+            );
+            renderer.render(vdom);
+        }
+
+        update(); // Initial
+    </script>
+    <style>
+        .test { border: 1px solid red; padding: 10px; margin: 10px; }
+    </style>
+</body>
+</html>
