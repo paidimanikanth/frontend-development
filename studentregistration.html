@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration Form</title>
+    <style>
+    body {
+    font-family: Arial;
+    background-color: lightblue;
+}
+
+.container {
+    width: 400px;
+    margin: auto;
+    background-color: white;
+    padding: 15px;
+}
+
+input, select, textarea {
+    width: 100%;
+    margin: 5px 0;
+}
+
+.gender input {
+    width: auto;
+}
+
+button {
+    margin-top: 10px;
+}
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Student Registration Form</h2>
+
+    <form>
+        <!-- Name -->
+        <label>Full Name:</label>
+        <input type="text" placeholder="Enter your name" required>
+
+        <!-- Email -->
+        <label>Email:</label>
+        <input type="email" placeholder="Enter your email" required>
+
+        <!-- Gender -->
+        <label>Gender:</label>
+        <div class="gender">
+            <input type="radio" name="gender">Male
+            <input type="radio" name="gender">Female
+            <input type="radio" name="gender">Other
+        </div>
+
+        <!-- Course -->
+        <label>Select Course:</label>
+        <select>
+            <option>--Select--</option>
+            <option>B.Tech</option>
+            <option>B.Sc</option>
+            <option>B.Com</option>
+            <option>M.Tech</option>
+        </select>
+
+        <!-- Hobbies (Text Box) -->
+        <label>Hobbies:</label>
+        <textarea placeholder="Write your hobbies here..."></textarea>
+
+        <!-- Buttons -->
+        <div class="buttons">
+            <button type="submit" class="submit-btn">Submit</button>
+            <button type="reset" class="reset-btn">Reset</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
